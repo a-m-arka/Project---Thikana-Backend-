@@ -1,15 +1,16 @@
 import express from 'express';
 import { checkConnection } from './src/config/db.js';
 import createAllTables from './src/utils/dbUtils.js';
+import authRoutes from './src/routes/authRoutes.js';
+import cors from 'cors';
 
 const app = express();
 const port = 4000;
 
-// app.get('/', (req, res) => {
-//     res.send('Welcome to Thikana!');
-// });
-
+app.use(cors());
 app.use(express.json());
+
+app.use('/api/auth',authRoutes);
 
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);

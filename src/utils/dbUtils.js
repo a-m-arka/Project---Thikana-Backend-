@@ -1,5 +1,5 @@
 import { pool } from '../config/db.js';
-import dbQueries from './dbQueries.js';
+import createTableQueries from '../queries/createTableQueries.js';
 
 const createTable = async (tableName, query) => {
     try {
@@ -12,11 +12,11 @@ const createTable = async (tableName, query) => {
 
 const createAllTables = async () => {
     try {
-        await createTable('Users', dbQueries.createUsersTable);
-        await createTable('Properties', dbQueries.createPropertiesTable);
-        await createTable('Posts', dbQueries.createPostsTable);
-        await createTable('Messages', dbQueries.createMessagesTable);
-        await createTable('Property_Images', dbQueries.createPropertyImagesTable);
+        await createTable('Users', createTableQueries.createUsersTable);
+        await createTable('Properties', createTableQueries.createPropertiesTable);
+        await createTable('Posts', createTableQueries.createPostsTable);
+        await createTable('Messages', createTableQueries.createMessagesTable);
+        await createTable('Property_Images', createTableQueries.createPropertyImagesTable);
         console.log('All tables initialized successfully');
     } catch (error) {
         console.error('Error creating tables', error);
