@@ -1,5 +1,5 @@
 import UserModel from "../models/userModel.js";
-import { loginUser, registerUser, getUserFromToken } from "../services/authService.js";
+import { loginUser, registerUser } from "../services/authService.js";
 
 export const register = async (req, res) => {
     const { username, email, phone, password, confirmPassword } = req.body;
@@ -68,23 +68,5 @@ export const login = async (req, res) => {
     }catch(error){
         console.error('Error during login:', error);
         return res.status(500).json({ message: 'Login failed. Internal Server Error' });
-    }
-};
-
-export const getUser = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-        return res.status(401).json({ message: 'Token not found' });
-    }
-    try{
-        const response = await getUserFromToken(token);
-        
-        if(response.success){
-            return res.status(200).json({ data: response.data });
-        }
-        return res.status(400).json({ message: response.message });
-    }catch(error){
-        console.error('Error during getting user data:', error);
-        return res.status(500).json({ message: 'Failed to get data. Internal Server Error' });
     }
 };

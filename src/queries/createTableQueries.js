@@ -7,7 +7,8 @@ const createTableQueries = {
             phone_number VARCHAR(20),
             password VARCHAR(255) NOT NULL,
             address TEXT,
-            profile_picture_url VARCHAR(512)
+            profile_picture_url VARCHAR(512),  -- Store the URL for frontend display
+            profile_picture_cloudinary_id VARCHAR(255)  -- Store the Cloudinary public_id for deletion
         );
     `,
 
@@ -61,7 +62,8 @@ const createTableQueries = {
         CREATE TABLE IF NOT EXISTS Property_Images (
             image_id INT AUTO_INCREMENT PRIMARY KEY,
             property_id INT,
-            image_url VARCHAR(512),
+            image_url VARCHAR(512),  -- Store the URL for frontend display
+            cloudinary_public_id VARCHAR(255),  -- Store Cloudinary public_id for deletion
             FOREIGN KEY (property_id) REFERENCES Properties(property_id) ON DELETE CASCADE
         );
     `

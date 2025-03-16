@@ -1,7 +1,8 @@
 const userQueries = {
     createUser: `INSERT INTO users (name, email, phone_number, password) VALUES (?, ?, ?, ?);`,
+    getUserData: `SELECT user_id, name, email, phone_number, address, profile_picture_url, profile_picture_cloudinary_id FROM users WHERE user_id = ?;`,
     findUserByEmail: `SELECT * FROM users WHERE email = ?;`,
-    getUserData: `SELECT user_id, name, email, phone_number, address, profile_picture_url FROM users WHERE user_id = ?;`,
+    updateProfilePicture: `UPDATE users SET profile_picture_url = ?, profile_picture_cloudinary_id = ? WHERE user_id = ?;`,
 };
 
 export default userQueries;
