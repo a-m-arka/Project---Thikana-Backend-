@@ -4,8 +4,7 @@ const userQueries = {
         VALUES (?, ?, ?, ?);
     `,
     getUserData: `
-        SELECT user_id, name, email, phone_number, address, 
-               profile_picture_url, profile_picture_cloudinary_id 
+        SELECT * 
         FROM users 
         WHERE user_id = ?;
     `,
@@ -25,6 +24,11 @@ const userQueries = {
             email = COALESCE(?, email),
             phone_number = COALESCE(?, phone_number),
             address = COALESCE(?, address)
+        WHERE user_id = ?;
+    `,
+    changePassword: `
+        UPDATE users 
+        SET password = ? 
         WHERE user_id = ?;
     `,
 };

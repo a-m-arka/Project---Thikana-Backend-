@@ -34,7 +34,7 @@ export const updateUserProfilePicture = async (userId, url, publicId) => {
         return { success: true, message: "Profile picture updated successfully." };
     } catch (error) {
         console.error("Error updating profile picture:", error);
-        return { success: false, message: "Error updating profile picture.", error };
+        return { success: false, message: "Error updating profile picture in database.", error: error };
     }
 };
 
@@ -46,6 +46,18 @@ export const updateUserDetails = async (userId, newData) => {
         return { success: true, message: "User details updated successfully." };
     }catch(error){
         console.error("Error updating user details in database:", error);
-        return { success: false, message: "Error updating user details in database.", error };
+        return { success: false, message: "Error updating user details in database.", error:error };
+    }
+};
+
+export const changePassword = async (userId, newPassword) => {
+    try {
+        const hashedPassword = await hashPassword(newPassword);
+        const query = userQueries.changePassword;
+        await pool.query(query, [hashedPassword, userId]);
+        return { success: true, message: "Password changed successfully." };
+    } catch (error) {
+        console.error("Error changing password in database:", error);
+        return { success: false, message: "Error changing password in database.", error: error };
     }
 };

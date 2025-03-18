@@ -10,6 +10,14 @@ export const hashPassword = async (password) => {
 };
 
 export const verifyPassword = async (password, hashedPassword) => {
+
+    // console.log("Plain:", password);
+    // console.log("Hashed:", hashedPassword); // Debugging: Check if this is undefined
+
+    if (!hashedPassword) {
+        throw new Error("Password not found for user");
+    }
+
     return await bcrypt.compare(password, hashedPassword);
 };
 

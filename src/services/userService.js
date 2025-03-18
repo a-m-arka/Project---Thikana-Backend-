@@ -1,8 +1,9 @@
-import { getUserFromToken, updateUserProfilePicture, findUserByEmail, updateUserDetails } from "../utils/userUtils.js";
+import * as userUtils from "../utils/userUtils.js";
 import { uploadImage, deleteImage } from "../utils/cloudinaryUtils.js";
+import { verifyPassword } from "../utils/authUtils.js";
 
 export const getUserService = async (token) => {
-    const user = await getUserFromToken(token);
+    const user = await userUtils.getUserFromToken(token);
     if (!user) {
         return { success: false, message: "Invalid token" };
     }
@@ -11,7 +12,7 @@ export const getUserService = async (token) => {
 
 export const  updateProfilePictureService = async (token, fileBuffer, fileName) => {
     try{
-        const user = await getUserFromToken(token);
+        const user = await userUtils.getUserFromToken(token);
         if(!user){
             return {success: false, message: "Invalid token"};
         }
@@ -25,11 +26,8 @@ export const  updateProfilePictureService = async (token, fileBuffer, fileName) 
         if(!uploadedImage.success){
             return {success: false, message: "Error uploading new profile picture", error: uploadedImage.error};
         }
-        const updateResult = await updateUserProfilePicture(user.user_id, uploadedImage.result.secure_url, uploadedImage.result.public_id);
-        if(!updateResult.success){
-            return {success: false, message: "Error updating profile picture", error: updateResult.error};
-        }
-        return {success: true, message: "Profile picture updated successfully"};
+        const result = await userUtils.updateUserProfilePicture(user.user_id, uploadedImage.result.secure_url, uploadedImage.result.public_id);
+        return result;
     }catch(error){
         console.error("Error updating profile picture:", error);
         return {success: false, message: "Error updating profile picture", error};
@@ -38,22 +36,37 @@ export const  updateProfilePictureService = async (token, fileBuffer, fileName) 
 
 export const editProfileService = async (token, newData) => {
     try{
-        const user = await getUserFromToken(token);
+        const user = await userUtils.getUserFromToken(token);
         if(!user){
             return {success: false, message: "Invalid token"};
         }
-        const existingUser = await findUserByEmail(newData.email);
+        const existingUser = await userUtils.findUserByEmail(newData.email);
         if (existingUser) {
             return { success: false, message: "Email already exists" };
         }
-        const updateResult = await updateUserDetails(user.user_id, newData);
-        if(!updateResult.success){
-            return {success: false, message: updateResult.message, error: updateResult.error};
-        }
-        return {success: true, message: updateResult.message};
+        const result = await userUtils.updateUserDetails(user.user_id, newData);
+        return result;
     }
     catch(error){
         console.error("Error updating user details:", error);
         return {success: false, message: "Error updating user details", error};
+    }
+};
+
+export const changePasswordService = async (token, oldPassword, newPassword) => {
+    try{
+        const user = await userUtils.getUserFromToken(token);
+        if(!user){
+            return {success: false, message: "Invalid token"};
+        }
+        const isOldPasswordValid = await verifyPassword(oldPassword, user.password);
+        if(!isOldPasswordValid){
+            return {success: false, message: "Invalid old password"};
+        }
+        const result = await userUtils.changePassword(user.user_id, newPassword);
+        return result;
+    }catch(error){
+        console.error("Error changing password:", error);
+        return {success: false, message: "Error changing password", error};
     }
 };

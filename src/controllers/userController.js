@@ -1,4 +1,4 @@
-import { getUserService, updateProfilePictureService, editProfileService } from "../services/userService.js";
+import { getUserService, updateProfilePictureService, editProfileService, changePasswordService } from "../services/userService.js";
 
 export const getUserController = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -64,5 +64,32 @@ export const editProfileController = async (req, res) => {
     }catch(error){
         console.error('Error during updating profile:', error);
         return res.status(500).json({ message: 'Failed to update profile. Internal Server Error' });
+    }
+};
+
+export const changePasswordController = async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Token not found' });
+    }
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    if(newPassword !== confirmPassword){
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+    if (!/^.{8}$/.test(newPassword)) {
+        return res.status(400).json({
+            message: 'Password must be at least 8 characters long'
+        });
+    }
+    try{
+        const response = await changePasswordService(token, oldPassword, newPassword);
+        
+        if(response.success){
+            return res.status(200).json({ message: response.message });
+        }
+        return res.status(400).json({ message: response.message });
+    }catch(error){
+        console.error('Error during changing password:', error);
+        return res.status(500).json({ message: 'Failed to change password. Internal Server Error' });
     }
 };
