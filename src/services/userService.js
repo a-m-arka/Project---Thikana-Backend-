@@ -1,4 +1,4 @@
-import { getUserFromToken, updateUserProfilePicture } from "../utils/userUtils.js";
+import { getUserFromToken, updateUserProfilePicture, findUserByEmail, updateUserDetails } from "../utils/userUtils.js";
 import { uploadImage, deleteImage } from "../utils/cloudinaryUtils.js";
 
 export const getUserService = async (token) => {
@@ -33,5 +33,27 @@ export const  updateProfilePictureService = async (token, fileBuffer, fileName) 
     }catch(error){
         console.error("Error updating profile picture:", error);
         return {success: false, message: "Error updating profile picture", error};
+    }
+};
+
+export const editProfileService = async (token, newData) => {
+    try{
+        const user = await getUserFromToken(token);
+        if(!user){
+            return {success: false, message: "Invalid token"};
+        }
+        const existingUser = await findUserByEmail(newData.email);
+        if (existingUser) {
+            return { success: false, message: "Email already exists" };
+        }
+        const updateResult = await updateUserDetails(user.user_id, newData);
+        if(!updateResult.success){
+            return {success: false, message: updateResult.message, error: updateResult.error};
+        }
+        return {success: true, message: updateResult.message};
+    }
+    catch(error){
+        console.error("Error updating user details:", error);
+        return {success: false, message: "Error updating user details", error};
     }
 };

@@ -31,10 +31,21 @@ export const updateUserProfilePicture = async (userId, url, publicId) => {
     try {
         const query = userQueries.updateProfilePicture;
         await pool.query(query, [url, publicId, userId]);
-
         return { success: true, message: "Profile picture updated successfully." };
     } catch (error) {
         console.error("Error updating profile picture:", error);
         return { success: false, message: "Error updating profile picture.", error };
+    }
+};
+
+export const updateUserDetails = async (userId, newData) => {
+    try{
+        const query = userQueries.updateUserDetails;
+        const { name, email, phone, address } = newData;
+        await pool.query(query, [name, email, phone, address, userId]);
+        return { success: true, message: "User details updated successfully." };
+    }catch(error){
+        console.error("Error updating user details in database:", error);
+        return { success: false, message: "Error updating user details in database.", error };
     }
 };
