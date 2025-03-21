@@ -1,12 +1,12 @@
-import { getUserService, updateProfilePictureService, editProfileService, changePasswordService } from "../services/userService.js";
+import * as userService from "../services/userService.js";
 
-export const getUserController = async (req, res) => {
+export const getUser = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'Token not found' });
     }
     try{
-        const response = await getUserService(token);
+        const response = await userService.getUser(token);
         
         if(response.success){
             return res.status(200).json({ data: response.data });
@@ -18,7 +18,7 @@ export const getUserController = async (req, res) => {
     }
 };
 
-export const updateProfilePictureController = async (req, res) => {
+export const updateProfilePicture = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'Token not found' });
@@ -29,7 +29,7 @@ export const updateProfilePictureController = async (req, res) => {
     try{
         const fileBuffer = req.file.buffer;
         const fileName = `uploads/${Date.now()}-${req.file.originalname}`;
-        const response = await updateProfilePictureService(token, fileBuffer, fileName);
+        const response = await userService.updateProfilePicture(token, fileBuffer, fileName);
         
         if(response.success){
             return res.status(200).json({ message: response.message });
@@ -41,7 +41,7 @@ export const updateProfilePictureController = async (req, res) => {
     }
 };
 
-export const editProfileController = async (req, res) => {
+export const editProfile = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'Token not found' });
@@ -55,7 +55,7 @@ export const editProfileController = async (req, res) => {
     }
     try{
         const newData = { name, email, phone, address };
-        const response = await editProfileService(token, newData);
+        const response = await userService.editProfile(token, newData);
         
         if(response.success){
             return res.status(200).json({ message: response.message });
@@ -67,7 +67,7 @@ export const editProfileController = async (req, res) => {
     }
 };
 
-export const changePasswordController = async (req, res) => {
+export const changePassword = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'Token not found' });
@@ -82,7 +82,7 @@ export const changePasswordController = async (req, res) => {
         });
     }
     try{
-        const response = await changePasswordService(token, oldPassword, newPassword);
+        const response = await userService.changePassword(token, oldPassword, newPassword);
         
         if(response.success){
             return res.status(200).json({ message: response.message });

@@ -31,12 +31,14 @@ const createTableQueries = {
             post_id INT AUTO_INCREMENT PRIMARY KEY,
             property_id INT,
             user_id INT,
+            post_type ENUM('sell', 'rent') NOT NULL,
             status ENUM('active', 'inactive') DEFAULT 'active',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (property_id) REFERENCES Properties(property_id) ON DELETE CASCADE,
             FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
         );
+
     `,
 
     createMessagesTable: `

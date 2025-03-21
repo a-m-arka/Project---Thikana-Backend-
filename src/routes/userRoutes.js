@@ -1,13 +1,13 @@
 import express from 'express';
 import upload from '../config/multer.js';
-import { getUserController, updateProfilePictureController, editProfileController, changePasswordController } from '../controllers/userController.js';
+import * as userController from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.get('/get_user_data',getUserController);
-router.put('/update_profile_picture', upload.single('file'), updateProfilePictureController);
-router.put('/edit_profile', editProfileController);
-router.put('/change_password', changePasswordController);
+router.get('/get-user-data',userController.getUser);
+router.put('/update-profile-picture', upload.single('file'), userController.updateProfilePicture);
+router.put('/edit-profile', userController.editProfile);
+router.put('/change-password', userController.changePassword);
 
 
 export default router;

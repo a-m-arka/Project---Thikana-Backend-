@@ -4,6 +4,7 @@ import createAllTables from './src/utils/dbUtils.js';
 import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import imageRoutes from './src/routes/imageRoutes.js';
+import propertyRoutes from './src/routes/propertyRoutes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -19,6 +20,8 @@ app.use(express.json());
 app.use('/api/auth',authRoutes);
 app.use('/api/user',userRoutes);
 app.use('/api/image',imageRoutes);
+app.use('/api/property',propertyRoutes);
+
 
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);

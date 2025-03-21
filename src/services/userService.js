@@ -2,7 +2,7 @@ import * as userUtils from "../utils/userUtils.js";
 import { uploadImage, deleteImage } from "../utils/cloudinaryUtils.js";
 import { verifyPassword } from "../utils/authUtils.js";
 
-export const getUserService = async (token) => {
+export const getUser = async (token) => {
     const user = await userUtils.getUserFromToken(token);
     if (!user) {
         return { success: false, message: "Invalid token" };
@@ -10,7 +10,7 @@ export const getUserService = async (token) => {
     return { success: true, data: user };
 };
 
-export const  updateProfilePictureService = async (token, fileBuffer, fileName) => {
+export const  updateProfilePicture = async (token, fileBuffer, fileName) => {
     try{
         const user = await userUtils.getUserFromToken(token);
         if(!user){
@@ -34,7 +34,7 @@ export const  updateProfilePictureService = async (token, fileBuffer, fileName) 
     }
 };
 
-export const editProfileService = async (token, newData) => {
+export const editProfile = async (token, newData) => {
     try{
         const user = await userUtils.getUserFromToken(token);
         if(!user){
@@ -53,7 +53,7 @@ export const editProfileService = async (token, newData) => {
     }
 };
 
-export const changePasswordService = async (token, oldPassword, newPassword) => {
+export const changePassword = async (token, oldPassword, newPassword) => {
     try{
         const user = await userUtils.getUserFromToken(token);
         if(!user){
