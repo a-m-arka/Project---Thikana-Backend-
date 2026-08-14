@@ -4,21 +4,21 @@ import propertyQueries from "../queries/propertyQueries.js";
 export const addNewProperty = async (userId, property) => {
     const query = propertyQueries.addNewProperty;
     const values = [
-        userId, 
-        property.title, 
-        property.address, 
-        property.city, 
-        property.price, 
-        property.type, 
+        userId,
+        property.title,
+        property.address,
+        property.city,
+        property.price,
+        property.type,
         property.description
     ];
-    
+
     try {
         const [result] = await pool.query(query, values);
-        return {success: true, propertyId: result.insertId};
+        return { success: true, propertyId: result.insertId };
     } catch (error) {
         console.error('Error adding property in database:', error);
-        return {success: false, message: 'Error adding property in database', error: error};
+        return { success: false, message: 'Error adding property in database', error: error };
     }
 };
 
@@ -38,12 +38,12 @@ export const deleteProperty = async (propertyId) => {
 export const updateProperty = async (propertyId, property) => {
     const query = propertyQueries.updateProperty;
     const values = [
-        property.title, 
-        property.address, 
-        property.city, 
-        property.price, 
-        property.type, 
-        property.description, 
+        property.title,
+        property.address,
+        property.city,
+        property.price,
+        property.type,
+        property.description,
         propertyId
     ];
 
@@ -115,7 +115,7 @@ export const checkUserPropertyOwnership = async (userId, propertyId) => {
 
     try {
         const [result] = await pool.query(query, values);
-        return { success: true , ownership: result[0].count > 0 };
+        return { success: true, ownership: result[0].count > 0 };
     } catch (error) {
         console.error('Error checking property ownership in database:', error);
         return { success: false, message: 'Error checking ownership of property', error: error };
@@ -128,7 +128,7 @@ export const checkPropertyImageOwnership = async (propertyId, imageId) => {
 
     try {
         const [result] = await pool.query(query, values);
-        return { success: true , ownership: result[0].imageCount > 0 };
+        return { success: true, ownership: result[0].imageCount > 0 };
     } catch (error) {
         console.error('Error checking image ownership in database:', error);
         return { success: false, message: 'Error checking ownership of image', error: error };

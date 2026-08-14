@@ -5,6 +5,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import imageRoutes from './src/routes/imageRoutes.js';
 import propertyRoutes from './src/routes/propertyRoutes.js';
+import postRoutes from './src/routes/postRoutes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -17,18 +18,19 @@ const port = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth',authRoutes);
-app.use('/api/user',userRoutes);
-app.use('/api/image',imageRoutes);
-app.use('/api/property',propertyRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/image', imageRoutes);
+app.use('/api/property', propertyRoutes);
+app.use('/api/post', postRoutes);
 
 
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);
-    try{
+    try {
         await checkConnection();
         await createAllTables();
-    }catch(error){
+    } catch (error) {
         console.error('Failed to initialize database', error);
     }
 });
