@@ -15,7 +15,6 @@ Thikana (ঠিকানা — Bangla for "address") is a full-stack real estat
 - [API Overview](#api-overview)
 - [Database Schema](#database-schema)
 - [Roadmap](#roadmap)
-- [License](#license)
 
 ## Features
 
@@ -167,7 +166,3 @@ The backend automatically provisions the following MySQL tables on startup:
 - [ ] Add search/filter functionality to the Explore page
 - [ ] Add automated tests
 - [ ] Add API documentation (e.g. Swagger/OpenAPI)
-
-## License
-
-No license specified yet. Add a `LICENSE` file to define usage terms for this project.
