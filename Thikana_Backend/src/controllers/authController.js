@@ -26,7 +26,7 @@ export const register = async (req, res) => {
 
     */
 
-    if (!/^.{8}$/.test(password)) {
+    if (!/^.{8,}$/.test(password)) {
         return res.status(400).json({
             message: 'Password must be at least 8 characters long'
         });

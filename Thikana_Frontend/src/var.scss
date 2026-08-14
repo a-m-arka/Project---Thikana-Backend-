@@ -1,0 +1,19 @@
+$primary-color: #0f766e;
+$primary-dark: #0b5d57;
+$primary-light: #dff5ef;
+$accent-color: #f59e0b;
+$background-color: #f6f8f7;
+$surface-color: #ffffff;
+$text-color: #17211f;
+$muted-text-color: #68736f;
+$border-color: #e3e9e6;
+$danger-color: #dc2626;
+$shadow: 0 12px 28px rgba(21, 42, 36, 0.08);
+$sidebar-width: 250px;
+
+@mixin card {
+  background: $surface-color;
+  border: 1px solid $border-color;
+  border-radius: 18px;
+  box-shadow: $shadow;
+}

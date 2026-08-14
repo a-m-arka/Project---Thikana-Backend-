@@ -1,0 +1,21 @@
+@use './var.scss' as *;
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+}
+.app-content {
+  min-width: 0;
+  flex: 1;
+  margin-left: $sidebar-width;
+}
+.app-content main {
+  padding: 88px 32px 36px;
+}
+@media (max-width: 760px) {
+  .app-content {
+    margin-left: 0;
+  }
+  .app-content main {
+    padding: 78px 16px 92px;
+  }
+}

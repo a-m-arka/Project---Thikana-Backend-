@@ -1,0 +1,77 @@
+@use '../../var.scss' as *;
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #e1f2ed, #f6f8f7);
+}
+.auth-card {
+  width: min(100%, 440px);
+  padding: 42px;
+  background: $surface-color;
+  border: 1px solid $border-color;
+  border-radius: 22px;
+  box-shadow: $shadow;
+}
+.auth-brand {
+  display: inline-block;
+  margin-bottom: 38px;
+  color: $primary-color;
+  font-size: 22px;
+  font-weight: 800;
+}
+.auth-card h1 {
+  margin: 6px 0;
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+.auth-copy {
+  margin: 0 0 28px;
+  color: $muted-text-color;
+}
+.auth-card form {
+  display: grid;
+  gap: 17px;
+}
+.auth-card label {
+  display: grid;
+  gap: 7px;
+  color: $text-color;
+  font-size: 14px;
+  font-weight: 700;
+}
+.auth-card input {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid $border-color;
+  border-radius: 9px;
+  outline: 0;
+}
+.auth-card input:focus {
+  border-color: $primary-color;
+  box-shadow: 0 0 0 3px $primary-light;
+}
+.auth-card button {
+  width: 100%;
+  margin-top: 4px;
+}
+.auth-card button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.form-error {
+  margin: 0;
+  color: $danger-color;
+  font-size: 13px;
+}
+.auth-switch {
+  margin: 24px 0 0;
+  text-align: center;
+  color: $muted-text-color;
+  font-size: 14px;
+}
+.auth-switch a {
+  color: $primary-dark;
+  font-weight: 800;
+}

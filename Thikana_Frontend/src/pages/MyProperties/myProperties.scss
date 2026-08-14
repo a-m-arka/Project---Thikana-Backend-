@@ -1,0 +1,115 @@
+@use '../../var.scss' as *;
+.properties-page__header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.properties-page h1 {
+  margin: 5px 0;
+  font-size: 34px;
+  letter-spacing: -1px;
+}
+.properties-page__header p:last-child {
+  margin: 0;
+  color: $muted-text-color;
+}
+.property-form {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0;
+  padding: 25px;
+  @include card;
+}
+.property-form h2 {
+  margin: 0;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.property-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.property-form input,
+.property-form select,
+.property-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  background: white;
+}
+.property-form textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+.property-form .button {
+  justify-self: start;
+}
+.notice {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: $primary-light;
+  color: $primary-dark;
+}
+.loading {
+  color: $muted-text-color;
+}
+.my-property-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+.my-property-list article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  @include card;
+}
+.my-property-list h3 {
+  margin: 0;
+}
+.my-property-list p {
+  margin: 5px 0 0;
+  color: $muted-text-color;
+}
+.property-actions {
+  display: flex;
+  gap: 7px;
+}
+.property-actions button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  background: white;
+  color: $muted-text-color;
+  font-size: 19px;
+}
+.empty-state {
+  margin-top: 28px;
+  background: white;
+}
+.empty-state .button {
+  margin-top: 10px;
+}
+@media (max-width: 600px) {
+  .properties-page__header {
+    align-items: start;
+    flex-direction: column;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .properties-page__header .button {
+    width: 100%;
+  }
+}

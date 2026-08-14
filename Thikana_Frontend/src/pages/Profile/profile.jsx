@@ -1,0 +1,87 @@
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import './profile.scss';
+export default function Profile() {
+  const { token, apiUrl, user, updateUser } = useAuth();
+  const [form, setForm] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone_number || '',
+    address: user?.address || '',
+  });
+  const [message, setMessage] = useState('');
+  useEffect(() => {
+    fetch(`${apiUrl}/user/get-user-data`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.data) {
+          updateUser(data.data);
+          setForm({
+            name: data.data.name || '',
+            email: data.data.email || '',
+            phone: data.data.phone_number || '',
+            address: data.data.address || '',
+          });
+        }
+      })
+      .catch(() => {});
+  }, [apiUrl, token]);
+  const submit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await fetch(`${apiUrl}/user/edit-profile`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(form),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.message);
+      updateUser({ ...user, ...form, phone_number: form.phone });
+      setMessage(data.message);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+  return (
+    <div className="page profile-page">
+      <p className="eyebrow">Account settings</p>
+      <h1>My Profile</h1>
+      <p className="profile-page__lead">
+        Keep your contact information current so interested members can reach you.
+      </p>
+      <form onSubmit={submit}>
+        <div className="profile-avatar">{(form.name || 'U')[0].toUpperCase()}</div>
+        <div className="form-grid">
+          <label>
+            Name
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          </label>
+          <label>
+            Email
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </label>
+          <label>
+            Phone number
+            <input
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
+          </label>
+          <label>
+            Address
+            <input
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
+            />
+          </label>
+        </div>
+        {message && <p className="notice">{message}</p>}
+        <button className="button">Save changes</button>
+      </form>
+    </div>
+  );
+}
