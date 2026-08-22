@@ -19,6 +19,15 @@ export function AuthProvider({ children }) {
     if (!response.ok) throw new Error(data.message || 'Unable to sign in');
     localStorage.setItem('thikana_token', data.token);
     setToken(data.token);
+    try {
+      const userResponse = await fetch(`${API_URL}/user/get-user-data`, {
+        headers: { Authorization: `Bearer ${data.token}` },
+      });
+      const userData = await userResponse.json();
+      if (userResponse.ok && userData.data) updateUser(userData.data);
+    } catch {
+      // A valid login still succeeds if profile hydration is temporarily unavailable.
+    }
   };
 
   const register = async (form) => {

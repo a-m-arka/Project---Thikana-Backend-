@@ -1,0 +1,105 @@
+@use '../../var.scss' as *;
+
+.property-details {
+  max-width: 1080px;
+}
+.property-details__back {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: $primary-dark;
+  font-weight: 700;
+  text-decoration: none;
+}
+.property-details__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $border-color;
+}
+.property-details__header h1 {
+  margin: 5px 0 10px;
+  font-size: 34px;
+  letter-spacing: -1px;
+}
+.property-details__location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: $muted-text-color;
+}
+.property-details__price {
+  color: $text-color;
+  font-size: 26px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.property-details__price small {
+  color: $muted-text-color;
+  font-size: 14px;
+  font-weight: 500;
+}
+.property-details__message {
+  margin-top: 22px;
+}
+.property-details__section {
+  margin-top: 30px;
+}
+.property-details__section h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+.property-details__section > p {
+  max-width: 760px;
+  color: $muted-text-color;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.property-details__facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 0;
+}
+.property-details__facts div {
+  padding: 14px;
+  @include card;
+}
+.property-details__facts dt {
+  color: $muted-text-color;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.property-details__facts dd {
+  margin: 5px 0 0;
+  color: $text-color;
+  font-weight: 700;
+}
+.property-details__gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.property-details__gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.property-details__state {
+  color: $muted-text-color;
+}
+@media (max-width: 700px) {
+  .property-details__header {
+    flex-direction: column;
+  }
+  .property-details__facts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .property-details__gallery {
+    grid-template-columns: 1fr;
+  }
+}

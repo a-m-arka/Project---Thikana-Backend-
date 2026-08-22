@@ -1,6 +1,13 @@
-import { useEffect, useState } from 'react';
-import { HiOutlinePlus, HiOutlinePencilSquare, HiOutlineTrash } from 'react-icons/hi2';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  HiOutlineArrowUpOnSquare,
+  HiOutlinePlus,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+} from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
+import PropertyCard from '../../components/PropertyCard/propertyCard';
+import { toCardProperty } from '../../utils/propertyDisplay';
 import './myProperties.scss';
 const emptyForm = { title: '', address: '', city: '', price: '', type: 'flat', description: '' };
 export default function MyProperties() {
@@ -11,30 +18,108 @@ export default function MyProperties() {
   const [form, setForm] = useState(emptyForm);
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState('');
-  useEffect(() => {
-    fetch(`${apiUrl}/property/user-properties`, { headers: { Authorization: `Bearer ${token}` } })
+  const [editingId, setEditingId] = useState(null);
+  const [postingPropertyId, setPostingPropertyId] = useState(null);
+  const [postType, setPostType] = useState('rent');
+
+  const loadProperties = useCallback(() => {
+    setLoading(true);
+    return fetch(`${apiUrl}/property/user-properties`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((r) => r.json())
       .then((data) => setProperties(data.properties || []))
       .catch(() => setMessage('Could not load your properties. Is the backend running?'))
       .finally(() => setLoading(false));
   }, [apiUrl, token]);
+
+  useEffect(() => {
+    loadProperties();
+  }, [loadProperties]);
+
   const submit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    Object.entries(form).forEach(([key, value]) => data.append(key, value));
-    files.forEach((file) => data.append('files', file));
     try {
-      const r = await fetch(`${apiUrl}/property/register-property`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
-      });
+      let r;
+      if (editingId) {
+        r = await fetch(`${apiUrl}/property/update-property/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(form),
+        });
+      } else {
+        const data = new FormData();
+        Object.entries(form).forEach(([key, value]) => data.append(key, value));
+        files.forEach((file) => data.append('files', file));
+        r = await fetch(`${apiUrl}/property/register-property`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: data,
+        });
+      }
       const result = await r.json();
       if (!r.ok) throw new Error(result.message);
       setMessage(result.message);
       setShowForm(false);
+      setEditingId(null);
       setForm(emptyForm);
       setFiles([]);
+      loadProperties();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const editProperty = (property) => {
+    setEditingId(property.property_id);
+    setForm({
+      title: property.title || '',
+      address: property.address || '',
+      city: property.city || '',
+      price: property.price || '',
+      type: property.type || 'flat',
+      description: property.description || '',
+    });
+    setFiles([]);
+    setMessage('');
+    setShowForm(true);
+  };
+
+  const deleteProperty = async (property) => {
+    if (!window.confirm(`Delete “${property.title}”? This cannot be undone.`)) return;
+    try {
+      const response = await fetch(`${apiUrl}/property/delete-property/${property.property_id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message);
+      setMessage(result.message);
+      loadProperties();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setForm(emptyForm);
+    setFiles([]);
+  };
+
+  const createPost = async (property) => {
+    try {
+      const response = await fetch(`${apiUrl}/post/create-post/${property.property_id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ postType }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message);
+      setMessage(result.message);
+      setPostingPropertyId(null);
+      loadProperties();
     } catch (err) {
       setMessage(err.message);
     }
@@ -47,13 +132,13 @@ export default function MyProperties() {
           <h1>My Properties</h1>
           <p>Manage property details, photos, and listing status in one place.</p>
         </div>
-        <button className="button" onClick={() => setShowForm(!showForm)}>
+        <button className="button" onClick={() => (showForm ? closeForm() : setShowForm(true))}>
           <HiOutlinePlus /> Add Property
         </button>
       </div>
       {showForm && (
         <form className="property-form" onSubmit={submit}>
-          <h2>Add a property</h2>
+          <h2>{editingId ? 'Edit property' : 'Add a property'}</h2>
           <div className="form-grid">
             <label>
               Title
@@ -99,16 +184,18 @@ export default function MyProperties() {
                 <option value="commercial">Commercial</option>
               </select>
             </label>
-            <label>
-              Images (up to 10)
-              <input
-                type="file"
-                required
-                accept="image/*"
-                multiple
-                onChange={(e) => setFiles([...e.target.files].slice(0, 10))}
-              />
-            </label>
+            {!editingId && (
+              <label>
+                Images (up to 10)
+                <input
+                  type="file"
+                  required
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => setFiles([...e.target.files].slice(0, 10))}
+                />
+              </label>
+            )}
           </div>
           <label>
             Description
@@ -118,31 +205,57 @@ export default function MyProperties() {
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
           </label>
-          <button className="button">Save property</button>
+          <button className="button">{editingId ? 'Save changes' : 'Save property'}</button>
         </form>
       )}
       {message && <p className="notice">{message}</p>}
       {loading ? (
         <p className="loading">Loading your properties…</p>
       ) : properties.length ? (
-        <div className="my-property-list">
+        <div className="property-grid my-property-grid">
           {properties.map((p) => (
-            <article key={p.property_id}>
-              <div>
-                <h3>{p.title}</h3>
-                <p>
-                  {p.city} · ৳ {p.price}
-                </p>
-              </div>
-              <div className="property-actions">
-                <button title="Edit">
-                  <HiOutlinePencilSquare />
-                </button>
-                <button title="Delete">
-                  <HiOutlineTrash />
-                </button>
-              </div>
-            </article>
+            <PropertyCard
+              key={p.property_id}
+              property={toCardProperty(p)}
+              actions={
+                <>
+                  {p.post_id ? (
+                    <span className="property-card__posted">Posted for {p.post_type}</span>
+                  ) : postingPropertyId === p.property_id ? (
+                    <div className="property-card__post-controls">
+                      <select
+                        value={postType}
+                        onChange={(event) => setPostType(event.target.value)}
+                      >
+                        <option value="rent">Rent</option>
+                        <option value="sell">Sell</option>
+                      </select>
+                      <button onClick={() => createPost(p)}>Confirm post</button>
+                      <button onClick={() => setPostingPropertyId(null)}>Cancel</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setPostType('rent');
+                        setPostingPropertyId(p.property_id);
+                      }}
+                      title={`Post ${p.title}`}
+                    >
+                      <HiOutlineArrowUpOnSquare />
+                      Post
+                    </button>
+                  )}
+                  <button onClick={() => editProperty(p)} title={`Edit ${p.title}`}>
+                    <HiOutlinePencilSquare />
+                    Edit
+                  </button>
+                  <button onClick={() => deleteProperty(p)} title={`Delete ${p.title}`}>
+                    <HiOutlineTrash />
+                    Delete
+                  </button>
+                </>
+              }
+            />
           ))}
         </div>
       ) : (

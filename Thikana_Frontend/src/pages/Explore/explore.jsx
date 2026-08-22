@@ -1,18 +1,33 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropertyCard from '../../components/PropertyCard/propertyCard';
-import { featuredProperties } from '../../data/properties';
+import { useAuth } from '../../context/AuthContext';
+import { toCardProperty } from '../../utils/propertyDisplay';
 import './explore.scss';
-export default function Explore() {
+
+export default function Explore({ onMessageOwner }) {
+  const { apiUrl, user } = useAuth();
   const [filters, setFilters] = useState({ city: '', type: '', postType: '' });
+  const [listedProperties, setListedProperties] = useState([]);
+
+  useEffect(() => {
+    fetch(`${apiUrl}/post/posts`)
+      .then((response) => response.json().then((data) => ({ response, data })))
+      .then(({ response, data }) => {
+        if (response.ok) setListedProperties((data.posts || []).map(toCardProperty));
+      })
+      .catch(() => {});
+  }, [apiUrl]);
+
   const properties = useMemo(
     () =>
-      featuredProperties.filter(
+      listedProperties.filter(
         (p) =>
+          Number(p.user_id) !== Number(user?.user_id) &&
           (!filters.city || p.city === filters.city) &&
           (!filters.type || p.type === filters.type) &&
           (!filters.postType || p.postType === filters.postType),
       ),
-    [filters],
+    [filters, listedProperties, user?.user_id],
   );
   return (
     <div className="page explore">
@@ -55,7 +70,7 @@ export default function Explore() {
       <p className="results-label">{properties.length} properties found</p>
       <div className="property-grid">
         {properties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
+          <PropertyCard key={property.id} property={property} onMessageOwner={onMessageOwner} />
         ))}
       </div>
       {!properties.length && (

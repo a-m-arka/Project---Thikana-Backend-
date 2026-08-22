@@ -1,14 +1,33 @@
-import express from 'express';
-import upload from '../config/multer.js';
-import * as propertyController from '../controllers/propertyController.js';
+import express from "express";
+import upload from "../config/multer.js";
+import * as propertyController from "../controllers/propertyController.js";
 
 const router = express.Router();
 
-router.post('/register-property', upload.array('files', 10), propertyController.registerProperty);
-router.delete('/delete-property/:propertyId', propertyController.deleteProperty);
-router.put('/update-property/:propertyId', propertyController.updatePropertyDetails);
-router.post('/add-new-images/:propertyId', upload.array('files', 10), propertyController.addNewPropertyImages);
-router.delete('/delete-images/:propertyId', propertyController.deletePropertyImages);
-router.get('/user-properties', propertyController.getUserProperties);
+router.post(
+  "/register-property",
+  upload.array("files", 10),
+  propertyController.registerProperty,
+);
+router.delete(
+  "/delete-property/:propertyId",
+  propertyController.deleteProperty,
+);
+router.put(
+  "/update-property/:propertyId",
+  propertyController.updatePropertyDetails,
+);
+router.post(
+  "/add-new-images/:propertyId",
+  upload.array("files", 10),
+  propertyController.addNewPropertyImages,
+);
+router.delete(
+  "/delete-images/:propertyId",
+  propertyController.deletePropertyImages,
+);
+router.get("/user-properties", propertyController.getUserProperties);
+router.get("/properties", propertyController.getAllProperties);
+router.get("/properties/:propertyId", propertyController.getPropertyById);
 
 export default router;

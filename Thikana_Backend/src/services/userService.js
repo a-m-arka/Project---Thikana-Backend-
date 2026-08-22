@@ -40,8 +40,14 @@ export const editProfile = async (token, newData) => {
         if(!user){
             return {success: false, message: "Invalid token"};
         }
+
+        // console.log("User", user);
+
         const existingUser = await userUtils.findUserByEmail(newData.email);
-        if (existingUser) {
+
+        // console.log("Existing User", existingUser);
+        
+        if (existingUser && existingUser.user_id !== user.user_id) {
             return { success: false, message: "Email already exists" };
         }
         const result = await userUtils.updateUserDetails(user.user_id, newData);

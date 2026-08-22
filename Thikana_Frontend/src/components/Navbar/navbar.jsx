@@ -6,8 +6,9 @@ import {
 } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import MessagePanel from '../MessagePanel/messagePanel';
 import './navbar.scss';
-export default function Navbar() {
+export default function Navbar({ messagesOpen, onMessagesOpenChange, messageTarget }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const initials = (user?.name || 'U').slice(0, 1).toUpperCase();
@@ -21,7 +22,11 @@ export default function Navbar() {
         <button title="Notifications" className="icon-button">
           <HiOutlineBell />
         </button>
-        <button title="Messages coming soon" className="icon-button">
+        <button
+          title="Messages"
+          className="icon-button"
+          onClick={() => onMessagesOpenChange(!messagesOpen)}
+        >
           <HiOutlineChatBubbleOvalLeft />
         </button>
         <button className="navbar__user" onClick={() => navigate('/app/profile')}>
@@ -39,6 +44,12 @@ export default function Navbar() {
           <HiOutlineArrowRightOnRectangle />
         </button>
       </div>
+      {messagesOpen && (
+        <MessagePanel
+          onClose={() => onMessagesOpenChange(false)}
+          initialConversation={messageTarget}
+        />
+      )}
     </header>
   );
 }

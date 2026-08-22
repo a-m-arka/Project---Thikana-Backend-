@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 import {
   HiArrowRight,
   HiOutlineBuildingOffice2,
@@ -6,9 +7,27 @@ import {
   HiOutlineMapPin,
 } from 'react-icons/hi2';
 import PropertyCard from '../../components/PropertyCard/propertyCard';
-import { featuredProperties } from '../../data/properties';
+import { useAuth } from '../../context/AuthContext';
+import { toCardProperty } from '../../utils/propertyDisplay';
 import './home.scss';
-export default function Home() {
+export default function Home({ onMessageOwner }) {
+  const { apiUrl, user } = useAuth();
+  const [listedProperties, setListedProperties] = useState([]);
+
+  useEffect(() => {
+    fetch(`${apiUrl}/post/posts`)
+      .then((response) => response.json().then((data) => ({ response, data })))
+      .then(({ response, data }) => {
+        if (response.ok) setListedProperties((data.posts || []).map(toCardProperty));
+      })
+      .catch(() => {});
+  }, [apiUrl]);
+
+  const visibleProperties = useMemo(
+    () => listedProperties.filter((property) => Number(property.user_id) !== Number(user?.user_id)),
+    [listedProperties, user?.user_id],
+  );
+
   return (
     <div className="page home">
       <section className="home__welcome">
@@ -49,8 +68,8 @@ export default function Home() {
           </Link>
         </div>
         <div className="property-grid">
-          {featuredProperties.slice(0, 3).map((property) => (
-            <PropertyCard key={property.id} property={property} />
+          {visibleProperties.slice(0, 3).map((property) => (
+            <PropertyCard key={property.id} property={property} onMessageOwner={onMessageOwner} />
           ))}
         </div>
       </section>
